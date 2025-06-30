@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATS - Check-in</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">
+                <h1>SATS</h1>
+            </a>
+            <button class="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="register.html"><i class="fas fa-user-plus"></i> Registration</a></li>
+                <li><a href="checkin.html" class="active"><i class="fas fa-sign-in-alt"></i> Check-in</a></li>
+                <li><a href="history.html"><i class="fas fa-history"></i> History</a></li>
+                <li><a href="calendar.html"><i class="fas fa-calendar-alt"></i> Calendar</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li class="theme-switcher">
+                    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+                <li class="user-menu">
+                    <button class="user-dropdown-btn">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name"></span>
+                        <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="profile.html" id="profile-link"><i class="fas fa-id-card"></i> Profile</a>
+                        <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <a href="register.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Login/Register</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div id="protected-content" style="display:none">
+            <section class="page-header fade-in">
+                <h1>Check-in</h1>
+                <p>Record your attendance for today's classes</p>
+            </section>
+
+            <div class="checkin-layout">
+                <div class="checkin-form card">
+                    <h2>Check-in Details</h2>
+                    <form id="checkinForm">
+                        <div class="form-group">
+                            <label for="courseId">Course</label>
+                            <select id="courseId" name="courseId" required>
+                                <option value="">Select a course</option>
+                                <option value="CS101">CS101 - Introduction to Programming</option>
+                                <option value="CS202">CS202 - Data Structures</option>
+                                <option value="CS303">CS303 - Database Systems</option>
+                                <option value="CS404">CS404 - Artificial Intelligence</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentId">Student ID</label>
+                            <input type="text" id="studentId" name="studentId" required placeholder="Enter your student ID">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Current Location</label>
+                            <div class="location-display">
+                                <span id="currentLocation">Waiting for location...</span>
+                                <button type="button" id="refreshLocation" class="btn btn-secondary">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="map" class="location-map"></div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Check-in
+                            </button>
+                        </div>
+
+                        <div id="checkinStatus" class="status-message"></div>
+                    </form>
+                </div>
+
+                <div class="checkin-info">
+                    <div class="card">
+                        <h3>Today's Schedule</h3>
+                        <div class="schedule-list">
+                            <div class="schedule-item">
+                                <div class="time">09:30 AM</div>
+                                <div class="course">CS101 - Introduction to Programming</div>
+                                <div class="location">Room 305</div>
+                                <div class="status present">Present</div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="time">11:00 AM</div>
+                                <div class="course">CS202 - Data Structures</div>
+                                <div class="location">Room 201</div>
+                                <div class="status upcoming">Upcoming</div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="time">02:00 PM</div>
+                                <div class="course">CS303 - Database Systems</div>
+                                <div class="location">Room 102</div>
+                                <div class="status upcoming">Upcoming</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Check-in Rules</h3>
+                        <ul class="rules-list">
+                            <li>
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Timing</h4>
+                                    <p>Check-in must be completed within 15 minutes of class start time</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <h4>Location</h4>
+                                    <p>You must be within the campus premises to check in</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <h4>Late Policy</h4>
+                                    <p>Check-ins after 15 minutes will be marked as "Late"</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-wifi"></i>
+                                <div>
+                                    <h4>Connection</h4>
+                                    <p>Ensure you have a stable internet connection</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <h2>SATS</h2>
+                    </div>
+                    <p>Smart Attendance Tracking System for Al-Ryada University</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="register.html">Registration</a></li>
+                        <li><a href="checkin.html">Check-in</a></li>
+                        <li><a href="history.html">History</a></li>
+                        <li><a href="calendar.html">Calendar</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul class="contact-info">
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:support@sats.rst.edu">support@sats.rst.edu</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:+1234567890">+123-456-7890</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Computer Science Building, RST University</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Smart Attendance Tracking System - Al-Ryada University</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="scripts.js"></script>
+    <script src="checkin.js"></script>
+    <script src="theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATS - Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">
+                <h1>SATS</h1>
+            </a>
+            <button class="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="register.html"><i class="fas fa-user-plus"></i> Registration</a></li>
+                <li><a href="checkin.html"><i class="fas fa-sign-in-alt"></i> Check-in</a></li>
+                <li><a href="history.html"><i class="fas fa-history"></i> History</a></li>
+                <li><a href="calendar.html" class="active"><i class="fas fa-calendar-alt"></i> Calendar</a></li>
+                <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li class="theme-switcher">
+                    <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+                <li class="user-menu">
+                    <button class="user-dropdown-btn">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name"></span>
+                        <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="profile.html" id="profile-link"><i class="fas fa-id-card"></i> Profile</a>
+                        <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <a href="register.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Login/Register</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div id="protected-content" style="display:none">
+            <section class="page-header fade-in">
+                <h1>Attendance Calendar</h1>
+                <p>Track and visualize your attendance patterns throughout the academic year</p>
+            </section>
+
+            <div class="calendar-layout">
+                <aside class="calendar-sidebar">
+                    <div class="user-profile card">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-info">
+                            <h3 id="calendarUserName">Not logged in</h3>
+                            <p id="calendarUserID">Please log in to view calendar</p>
+                        </div>
+                    </div>
+
+                    <div class="calendar-filters card">
+                        <h3>Filters</h3>
+                        <div class="form-group">
+                            <label for="calendarCourseFilter">Course</label>
+                            <select id="calendarCourseFilter">
+                                <option value="all">All Courses</option>
+                                <!-- Will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="calendarStatusFilter">Status</label>
+                            <select id="calendarStatusFilter">
+                                <option value="all">All Status</option>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                                <option value="late">Late</option>
+                                <option value="excused">Excused</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="calendar-summary card">
+                        <h3>Monthly Summary</h3>
+                        <div class="summary-stats">
+                            <div class="summary-stat">
+                                <span class="stat-label">Total Classes</span>
+                                <span class="stat-value" id="totalClasses">20</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Attendance Rate</span>
+                                <span class="stat-value" id="monthAttendanceRate">85%</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Most Attended</span>
+                                <span class="stat-value" id="mostAttendedCourse">CS101</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <div class="calendar-main">
+                    <div class="calendar-controls card">
+                        <div class="calendar-navigation">
+                            <button id="prevMonth" class="btn btn-outline" aria-label="Previous month">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h2 id="currentMonthYear">May 2025</h2>
+                            <button id="nextMonth" class="btn btn-outline" aria-label="Next month">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="calendar-view-options">
+                            <button class="btn btn-outline active" data-view="month">Month</button>
+                            <button class="btn btn-outline" data-view="week">Week</button>
+                            <button class="btn btn-outline" data-view="day">Day</button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-container card">
+                        <div id="monthView" class="calendar-view active">
+                            <div class="calendar-weekdays">
+                                <div class="day-header">Sun</div>
+                                <div class="day-header">Mon</div>
+                                <div class="day-header">Tue</div>
+                                <div class="day-header">Wed</div>
+                                <div class="day-header">Thu</div>
+                                <div class="day-header">Fri</div>
+                                <div class="day-header">Sat</div>
+                            </div>
+                            
+                            <div class="calendar-days" id="calendarDaysGrid">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div id="weekView" class="calendar-view">
+                            <div class="week-header">
+                                <div class="time-column"></div>
+                                <div class="day-column">
+                                    <div class="weekday">Sun</div>
+                                    <div class="date">Apr 27</div>
+                                </div>
+                                <div class="day-column">
+                                    <div class="weekday">Mon</div>
+                                    <div class="date">Apr 28</div>
+                                </div>
+                                <div class="day-column">
+                                    <div class="weekday">Tue</div>
+                                    <div class="date">Apr 29</div>
+                                </div>
+                                <div class="day-column">
+                                    <div class="weekday">Wed</div>
+                                    <div class="date">Apr 30</div>
+                                </div>
+                                <div class="day-column">
+                                    <div class="weekday">Thu</div>
+                                    <div class="date">May 1</div>
+                                </div>
+                                <div class="day-column">
+                                    <div class="weekday">Fri</div>
+                                    <div class="date">May 2</div>
+                                </div>
+                                <div class="day-column current-day">
+                                    <div class="weekday">Sat</div>
+                                    <div class="date">May 3</div>
+                                </div>
+                            </div>
+                            
+                            <div class="week-grid" id="weekGrid">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div id="dayView" class="calendar-view">
+                            <div class="day-header">
+                                <h3 id="currentDate">Saturday, May 3, 2025</h3>
+                            </div>
+                            <div class="day-schedule" id="daySchedule">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calendar-legend card">
+                        <h3>Legend</h3>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-color present"></div>
+                                <span class="legend-label">Present</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color absent"></div>
+                                <span class="legend-label">Absent</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color late"></div>
+                                <span class="legend-label">Late</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color excused"></div>
+                                <span class="legend-label">Excused</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <h2>SATS</h2>
+                    </div>
+                    <p>Smart Attendance Tracking System for Al-Ryada University</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="register.html">Registration</a></li>
+                        <li><a href="checkin.html">Check-in</a></li>
+                        <li><a href="history.html">History</a></li>
+                        <li><a href="calendar.html">Calendar</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul class="contact-info">
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:support@sats.rst.edu">support@sats.rst.edu</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:+1234567890">+123-456-7890</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Computer Science Building, RST University</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Smart Attendance Tracking System - Al-Ryada University</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script src="theme.js"></script>
+    <script src="calendar.js"></script>
+</body>
+</html>
