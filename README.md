@@ -1,3 +1,2 @@
-My Whole Project is here 
-My .gitignore file to ignore any unwanted file extention
-I am open to any improvements
+<h3>Open the index.html file using any editor (Notepad,Vscode,etc..)</h3>
+<h1>I need your opinion <_></h1>
